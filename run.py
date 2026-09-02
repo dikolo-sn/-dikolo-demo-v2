@@ -7,17 +7,18 @@ from datetime import datetime
 
 app = FastAPI(title="DiKoLo")
 
-app.mount("/static", StaticFiles(directory="statique"), name="static")
-templates = Jinja2Templates(directory="modèles")
+# TRUC IMPORTANT : On utilise le chemin absolu
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# MODE DEMO SANS LOGIN
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "statique")), name="static")
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "modèles")) # On force modèles
+
 USERS_DB = {"demo@dikolo.com": {"password": "demo", "paye": False, "nom": "Demo"}}
 DEMO_LIMITS = {"produits": 10, "ventes_jour": 3}
 compteur_demo = {"produits": 0, "ventes": 0, "date": datetime.now().date()}
 
-# ICI ON FORCE L'USER DEMO. PLUS DE SESSION DU TOUT
 def get_user(request: Request):
-    return USERS_DB.get("demo@dikolo.com") # On retourne direct demo
+    return USERS_DB.get("demo@dikolo.com")
 
 @app.middleware("http")
 async def restriction_middleware(request: Request, call_next):
@@ -25,14 +26,12 @@ async def restriction_middleware(request: Request, call_next):
     if path.startswith("/static"): 
         return await call_next(request)
     
-    user = get_user(request) # Maintenant ça ne plante plus
+    user = get_user(request)
     
-    # Reset compteur chaque jour
     if compteur_demo["date"] != datetime.now().date():
         compteur_demo["ventes"] = 0
         compteur_demo["date"] = datetime.now().date()
     
-    # Limites demo
     if user["paye"] == False:
         if path == "/produits/nouveau" and request.method == "POST":
             if compteur_demo["produits"] >= DEMO_LIMITS["produits"]:
