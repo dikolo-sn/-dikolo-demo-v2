@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "statique")), name="static")
 
 # TRUC POUR FORCER L'ENCODAGE
-templates_dir = os.path.join(BASE_DIR, "modèles")
+templates_dir = os.path.join(BASE_DIR, "templates")
 templates = Jinja2Templates(directory=templates_dir)
 
 USERS_DB = {"demo@dikolo.com": {"password": "demo", "paye": False, "nom": "Demo"}}
