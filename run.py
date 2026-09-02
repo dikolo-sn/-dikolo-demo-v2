@@ -5,7 +5,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime
+from starlette.middleware.sessions import SessionMiddleware
 
+app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_key_12345")
 app = FastAPI(title="DiKoLo")
 app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_change_moi_2026")
 
