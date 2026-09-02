@@ -7,36 +7,42 @@ from datetime import datetime
 
 app = FastAPI(title="DiKoLo")
 
-# ON ENLEVE COMPLETEMENT LE MIDDLEWARE DE SESSION
 app.mount("/static", StaticFiles(directory="statique"), name="static")
 templates = Jinja2Templates(directory="modèles")
 
+# MODE DEMO SANS LOGIN
 USERS_DB = {"demo@dikolo.com": {"password": "demo", "paye": False, "nom": "Demo"}}
 DEMO_LIMITS = {"produits": 10, "ventes_jour": 3}
 compteur_demo = {"produits": 0, "ventes": 0, "date": datetime.now().date()}
 
-# ON FORCE TOUJOURS L'USER DEMO
+# ICI ON FORCE L'USER DEMO. PLUS DE SESSION DU TOUT
 def get_user(request: Request):
-    return USERS_DB.get("demo@dikolo.com")
+    return USERS_DB.get("demo@dikolo.com") # On retourne direct demo
 
 @app.middleware("http")
 async def restriction_middleware(request: Request, call_next):
     path = request.url.path
-    if path.startswith("/static"): return await call_next(request)
+    if path.startswith("/static"): 
+        return await call_next(request)
     
-    user = get_user(request)
+    user = get_user(request) # Maintenant ça ne plante plus
+    
+    # Reset compteur chaque jour
     if compteur_demo["date"] != datetime.now().date():
         compteur_demo["ventes"] = 0
         compteur_demo["date"] = datetime.now().date()
+    
+    # Limites demo
     if user["paye"] == False:
         if path == "/produits/nouveau" and request.method == "POST":
             if compteur_demo["produits"] >= DEMO_LIMITS["produits"]:
-                return JSONResponse({"detail": "Limit 10 products reached."}, 403)
+                return JSONResponse({"detail": "Limite 10 produits atteinte. Passez à Premium."}, 403)
             compteur_demo["produits"] += 1
         if path == "/ventes/nouvelle" and request.method == "POST":
             if compteur_demo["ventes"] >= DEMO_LIMITS["ventes_jour"]:
-                return JSONResponse({"detail": "Limit 3 sales/day reached."}, 403)
+                return JSONResponse({"detail": "Limite 3 ventes/jour atteinte. Passez à Premium."}, 403)
             compteur_demo["ventes"] += 1
+            
     return await call_next(request)
 
 @app.get("/", response_class=HTMLResponse)
