@@ -7,11 +7,14 @@ from datetime import datetime
 
 app = FastAPI(title="DiKoLo")
 
-# TRUC IMPORTANT : On utilise le chemin absolu
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "statique")), name="static")
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "modèles")) # On force modèles
+# ON COMENTE LE STATIC LE TEMPS DE TESTER
+# app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "statique")), name="static")
+
+# TRUC POUR FORCER L'ENCODAGE
+templates_dir = os.path.join(BASE_DIR, "modèles")
+templates = Jinja2Templates(directory=templates_dir)
 
 USERS_DB = {"demo@dikolo.com": {"password": "demo", "paye": False, "nom": "Demo"}}
 DEMO_LIMITS = {"produits": 10, "ventes_jour": 3}
@@ -23,9 +26,6 @@ def get_user(request: Request):
 @app.middleware("http")
 async def restriction_middleware(request: Request, call_next):
     path = request.url.path
-    if path.startswith("/static"): 
-        return await call_next(request)
-    
     user = get_user(request)
     
     if compteur_demo["date"] != datetime.now().date():
