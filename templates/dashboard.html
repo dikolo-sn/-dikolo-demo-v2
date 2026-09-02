@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>DiKoLo - Dashboard</title>
+</head>
+<body style="font-family:Arial; padding:20px;">
+    <h1>Dashboard DiKoLo</h1>
+    <p>Bienvenue {{ user.nom }}</p>
+    <p>Statut: <b>{% if paye %}PREMIUM{% else %}DEMO{% endif %}</b></p>
+    <a href="/logout">Déconnexion</a>
+</body>
+</html>
