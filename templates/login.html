@@ -2,10 +2,15 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>DiKoLo - Login</title>
+    <title>DiKoLo - Connexion</title>
 </head>
 <body style="font-family:Arial; text-align:center; padding:50px;">
     <h1>Connexion DiKoLo</h1>
-    <p>Mode Demo actif</p>
+    <form action="/login" method="post">
+        <input type="email" name="email" placeholder="Email" required><br><br>
+        <input type="password" name="password" placeholder="Mot de passe" required><br><br>
+        <button type="submit">Se connecter</button>
+    </form>
+    <p><i>Mode DEMO actif</i></p>
 </body>
 </html>
