@@ -7,6 +7,9 @@ from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime
 from starlette.middleware.sessions import SessionMiddleware
 
+app = FastAPI()
+app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_key_12345")
+
 app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_key_12345")
 app = FastAPI(title="DiKoLo")
 app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_change_moi_2026")
