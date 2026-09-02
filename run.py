@@ -6,17 +6,22 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime
 
-# 1 SEUL app = FastAPI
+# 1. On crée l'app
 app = FastAPI(title="DiKoLo")
 
-# 1 SEUL middleware
-app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_change_moi_2026")
+# 2. ON MET LE MIDDLEWARE EN PREMIER, DIRECTEMENT
+app.add_middleware(
+    SessionMiddleware, 
+    secret_key="dikolo_secret_change_moi_2026",
+    same_site="lax",
+    https_only=False # Met True quand tu auras un vrai domaine avec https
+)
 
+# 3. Ensuite seulement on monte static et templates
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 USERS_DB = {"demo@dikolo.com": {"password": "demo", "paye": False, "nom": "Demo"}}
-
 DEMO_LIMITS = {"produits": 10, "ventes_jour": 3}
 compteur_demo = {"produits": 0, "ventes": 0, "date": datetime.now().date()}
 
@@ -28,7 +33,7 @@ def get_user(request: Request):
 @app.middleware("http")
 async def restriction_middleware(request: Request, call_next):
     path = request.url.path
-    if path in ["/login", "/static"]: return await call_next(request)
+    if path.startswith("/login") or path.startswith("/static"): return await call_next(request)
     user = get_user(request)
     if not user: return RedirectResponse("/login")
     if compteur_demo["date"] != datetime.now().date():
