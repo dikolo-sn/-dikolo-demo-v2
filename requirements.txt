@@ -7,3 +7,4 @@ qrcode[pil]
 pydantic
 starlette
 requests
+itsdangerous
