@@ -1,8 +1,7 @@
 import os, sys, json, csv, io, random, time, threading, webbrowser, subprocess
 from datetime import datetime, date, timedelta
 from collections import Counter
-from collections import Counter
-
+from fastapi import Request  # vérifie que t'as bien cet import en haut
 from fastapi import FastAPI, Form, UploadFile, File, Depends, Cookie, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse, StreamingResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -489,12 +488,12 @@ function toggleRoleInput(){var s=document.getElementById('role_select');var d=do
 @app.get("/")
 async def home(): return RedirectResponse(url="/login", status_code=303)
 
-@app.get("/login")
-async def login_get(msg: str = ""):
-    err = f"<div class='error'>{msg}</div>" if msg else ""
-    return HTMLResponse(CSS + f"<div class='login-box'><h1>DiKoLo</h1><h3>Gestion + Caisse</h3>{err}<form method='post' action='/login'><input name='username' placeholder='Login' required><br><br><input name='password' type='password' placeholder='Mot de passe' required><br><br><button style='width:100%'>SE CONNECTER</button></form></div>")
 
-@app.post("/login")
+
+@app.get("/login")
+async def login_get(request: Request, msg: str = ""):
+    err = f"<div class='error'>{msg}</div>" if msg else ""
+    return HTMLResponse(CSS + f"<div class='login-box'><h1>DiKoLo</h1><h3>Gestion + Caisse</h3>{err}<form method='post'>...")@app.post("/login")
 async def login_post(username: str = Form(...), password: str = Form(...)):
     users = lire(F_USERS); user = users.get(username)
     if not user or user["password"]!= password: return RedirectResponse(url="/login?msg=Identifiants incorrects", status_code=303)
