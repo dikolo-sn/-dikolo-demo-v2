@@ -1,38 +1,48 @@
 import os
-from fastapi import FastAPI, Request, Form # Rajoute Form
-from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse # Rajoute RedirectResponse
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import JSONResponse, HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from starlette.middleware.sessions import SessionMiddleware # Remet ça
+from starlette.middleware.sessions import SessionMiddleware
 from datetime import datetime
 
 app = FastAPI(title="DiKoLo")
 
-# REMET LE MIDDLEWARE
 app.add_middleware(SessionMiddleware, secret_key="dikolo_secret_2026", same_site="lax", https_only=False)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+# ICI ON CHANGE POUR TES NOMS FRANCAIS
+app.mount("/static", StaticFiles(directory="statique"), name="static") 
+templates = Jinja2Templates(directory="modèles") # <-- IMPORTANT
 
 USERS_DB = {"demo@dikolo.com": {"password": "demo", "paye": False, "nom": "Demo"}}
 DEMO_LIMITS = {"produits": 10, "ventes_jour": 3}
 compteur_demo = {"produits": 0, "ventes": 0, "date": datetime.now().date()}
 
 def get_user(request: Request):
-    email = request.session.get("user") # Remet les sessions
+    email = request.session.get("user")
     if not email: return None
     return USERS_DB.get(email)
 
 @app.middleware("http")
 async def restriction_middleware(request: Request, call_next):
     path = request.url.path
-    if path.startswith("/login") or path.startswith("/static"): return await call_next(request) # Autorise /login
+    if path.startswith("/login") or path.startswith("/static"): return await call_next(request)
     user = get_user(request)
-    if not user: return RedirectResponse("/login") # Redirige si pas connecté
-    # ... le reste du code des limites reste pareil
+    if not user: return RedirectResponse("/login")
+    if compteur_demo["date"] != datetime.now().date():
+        compteur_demo["ventes"] = 0
+        compteur_demo["date"] = datetime.now().date()
+    if user["paye"] == False:
+        if path == "/produits/nouveau" and request.method == "POST":
+            if compteur_demo["produits"] >= DEMO_LIMITS["produits"]:
+                return JSONResponse({"detail": "Limit 10 products reached."}, 403)
+            compteur_demo["produits"] += 1
+        if path == "/ventes/nouvelle" and request.method == "POST":
+            if compteur_demo["ventes"] >= DEMO_LIMITS["ventes_jour"]:
+                return JSONResponse({"detail": "Limit 3 sales/day reached."}, 403)
+            compteur_demo["ventes"] += 1
     return await call_next(request)
 
-# REMET CES 3 ROUTES
 @app.get("/login", response_class=HTMLResponse)
 def login_get(request: Request): return templates.TemplateResponse("login.html", {"request": request})
 
@@ -52,5 +62,5 @@ def logout(request: Request):
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     user = get_user(request)
-    if not user: return RedirectResponse("/login") # Protège la page d'accueil
+    if not user: return RedirectResponse("/login")
     return templates.TemplateResponse("index.html", {"request": request, "user": user, "paye": user["paye"]})
