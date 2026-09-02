@@ -1,1 +1,14 @@
-
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>DiKoLo - Dashboard</title>
+</head>
+<body style="font-family:Arial; text-align:center; padding:50px;">
+    <h1>🎉 DiKoLo est en ligne !</h1>
+    <p>Bonjour {{ user.nom }}</p>
+    <p>Mode: <b>{% if paye %}Premium{% else %}DEMO{% endif %}</b></p>
+    <hr>
+    <p>Si tu vois cette page, le déploiement a réussi !</p>
+</body>
+</html>
