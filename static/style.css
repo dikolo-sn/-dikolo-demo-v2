@@ -1,0 +1,8 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #333; }
+header { background: #1a3a8f; color: white; padding: 20px 40px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+header h1 { font-size: 24px; margin-bottom: 10px; }
+nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: 500; }
+nav a:hover { text-decoration: underline; }
+main { padding: 40px; max-width: 1200px; margin: auto; }
+h1 { color: #1a3a8f; margin-bottom: 15px; }
