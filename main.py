@@ -10,13 +10,16 @@ USER = "admin"
 PASS = "1234"
 
 CSS = """<style>
-body{font-family:Arial;margin:0;background:#f4f6f9}
-header{background:#1e3a8a;color:white;padding:15px}
+body{font-family:Arial;margin:0;background:#f0f8ff}
+header{background:linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);color:white;padding:15px 30px;box-shadow:0 4px 10px rgba(0,191,255,0.3)}
 .nav-links{display:flex;gap:15px;flex-wrap:wrap}
-.nav-links a{color:white;text-decoration:none}
+.nav-links a{color:white;text-decoration:none;padding:8px 12px;border-radius:8px}
+.nav-links a:hover{background:rgba(255,255,255,0.2)}
 .login-box{width:300px;margin:100px auto;padding:20px;background:white;border-radius:10px;box-shadow:0 0 10px #ccc}
 input,button{width:100%;padding:10px;margin:5px 0}
-button{background:#1e3a8a;color:white;border:none;cursor:pointer}
+button{background:#00BFFF;color:white;border:none;cursor:pointer;border-radius:5px}
+.welcome-box{background:linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);color:white;padding:40px;border-radius:15px;text-align:center;margin:30px;box-shadow:0 4px 15px rgba(0,191,255,0.2)}
+.welcome-box h1{color:white;font-size:32px}
 @media(max-width: 768px){.nav-links{flex-direction: column;}.login-box{width:90%}}
 </style>"""
 
@@ -38,7 +41,7 @@ async def login_page():
 @app.post("/login")
 async def do_login(username: str = Form(...), password: str = Form(...)):
     if username == USER and password == PASS:
-        response = RedirectResponse(url="/dashboard", status_code=302) # <- IMPORTANT
+        response = RedirectResponse(url="/dashboard", status_code=302)
         response.set_cookie("user", "admin")
         return response
     return RedirectResponse(url="/login", status_code=302)
@@ -50,12 +53,19 @@ async def logout():
     return response
 
 # ===== ROUTES APP =====
-@app.get("/dashboard", response_class=HTMLResponse) # <- IMPORTANT
+@app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(user: str = Cookie(None)):
-    if user != "admin": return RedirectResponse(url="/login")
+    if user != "admin": 
+        return RedirectResponse(url="/login")
     menu = build_menu("dashboard")
-    return HTMLResponse(f"{CSS}{menu}<div class="welcome-box"><h1>Bienvenue admin</h1><p>Version securisee + Mobile OK</p>
-</div>
+    # ICI LE FIX: on utilise des ''' triples guillemets
+    return HTMLResponse(f"""{CSS}{menu}
+    <div class="welcome-box">
+        <h1>Bienvenue admin</h1>
+        <p>Version securisee + Mobile OK</p>
+    </div>
+    """)
+
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return RedirectResponse(url="/login")
