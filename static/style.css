@@ -1,8 +1,37 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f7fa; color: #333; }
-header { background: #1a3a8f; color: white; padding: 20px 40px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-header h1 { font-size: 24px; margin-bottom: 10px; }
-nav a { color: white; text-decoration: none; margin-right: 25px; font-weight: 500; }
-nav a:hover { text-decoration: underline; }
-main { padding: 40px; max-width: 1200px; margin: auto; }
-h1 { color: #1a3a8f; margin-bottom: 15px; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f8ff; color: #333; }
+
+/* HEADER BLEU CIEL COMME LE .EXE */
+header { 
+    background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%); 
+    color: white; 
+    padding: 15px 30px; 
+    box-shadow: 0 4px 10px rgba(0,191,255,0.3);
+}
+header h1 { font-size: 22px; margin-bottom: 8px; font-weight: 700; }
+nav a { 
+    color: white; 
+    text-decoration: none; 
+    margin-right: 20px; 
+    font-weight: 600;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+nav a:hover { background: rgba(255,255,255,0.2); }
+
+/* BLOC BIENVENUE BLEU CIEL */
+main { padding: 30px; }
+.welcome-box {
+    background: linear-gradient(135deg, #00BFFF 0%, #0099CC 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(0,191,255,0.2);
+}
+.welcome-box h1 { color: white; font-size: 32px; margin-bottom: 10px; }
+.welcome-box p { font-size: 16px; opacity: 0.9; }
+
+h1 { color: #0099CC; }
