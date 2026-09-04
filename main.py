@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 app = FastAPI()
 
 # ===== CONFIG SECURITE =====
-DATE_EXPIRATION = datetime(2026, 10, 03) # 30 jours de test
+DATE_EXPIRATION = datetime(2026, 10, 3)  ✅ # 30 jours de test
 USER = "admin"
 PASS = "1234"
 
