@@ -54,10 +54,7 @@ async def logout():
 async def dashboard(user: str = Cookie(None)):
     if user != "admin": return RedirectResponse(url="/login")
     menu = build_menu("dashboard")
-    return HTMLResponse(f"{CSS}{menu}
-    <div class="welcome-box">
-    <h1>Bienvenue admin</h1>
-    <p>Version securisee + Mobile OK</p>
+    return HTMLResponse(f"{CSS}{menu}<div class="welcome-box"><h1>Bienvenue admin</h1><p>Version securisee + Mobile OK</p>
 </div>
 @app.get("/", response_class=HTMLResponse)
 async def root():
